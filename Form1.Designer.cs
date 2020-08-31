@@ -9,7 +9,7 @@ namespace common_compolet_pure
     {
 
         Thread cip_sycnc;
-        Thread mq_thread;
+
         private GroupBox groupBoxConnection;
         private NumericUpDown numPortNo;
         private Label labelPortNo;
@@ -27,16 +27,6 @@ namespace common_compolet_pure
         private Label labelName;
         private System.ComponentModel.IContainer components = null;
 
-        protected override void Dispose(bool disposing)
-        {
-            cip_sycnc.Abort();
-            mq_thread.Abort();
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
 
 
         private void InitializeComponent()
@@ -47,9 +37,6 @@ namespace common_compolet_pure
             this.Text = "Form1";
 
             cip_sycnc = new Thread(new ThreadStart(cip_update));
-
-            mq_thread = new Thread(new ThreadStart(mq_test));
-
 
             commonCompolet1 = new OMRON.Compolet.CIPCompolet64.CommonCompolet(this.components);
             
@@ -177,7 +164,7 @@ namespace common_compolet_pure
             this.chkMQ.Name = "chkMQ";
             this.chkMQ.Size = new System.Drawing.Size(71, 17);
             this.chkMQ.Text = "chkMQ";
-            this.chkMQ.CheckedChanged += new System.EventHandler(this.chkMQ_CheckedChanged);
+           // this.chkMQ.CheckedChanged += null ;//+= new System.EventHandler(this.chkMQ_CheckedChanged);
 
 
             // 
@@ -346,29 +333,6 @@ namespace common_compolet_pure
 			}
 		}
 
-		private void chkMQ_CheckedChanged(object sender, System.EventArgs e)
-		{
-			try
-			{
-				if (this.chkMQ.Checked)
-				{
-                    if(mq_thread.ThreadState == ThreadState.Unstarted)
-                        mq_thread.Start();
-                    if(mq_thread.ThreadState == ThreadState.Stopped){
-                        mq_thread = new Thread(new ThreadStart(mq_test));
-                        mq_thread.Start();
-                    }
-
-				}else{
-                    mq_end = false;
-                }
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				this.chkMQ.Checked = false;
-			}
-		}
 
 
     }
