@@ -13,51 +13,7 @@ namespace common_compolet_pure
 {
     partial class Form1
     {		
-        private bool cip_end;
-		
-        private void cip_update(){
-            cip_end = true;
-            try
-            {
-               
-                using (var publisher = new PublisherSocket())
-                {
-                    publisher.Connect("tcp://127.0.0.1:5550");
-                    while(cip_end)
-                    {
 
-                        object obj = this.commonCompolet1.ReadVariable("eth_var");
-                        if (obj == null)
-                        {
-                            throw new NotSupportedException();
-                        }
-
-
-                    ///	VariableInfo info = null;
-
-                    //  info = this.commonCompolet1.GetVariableInfo(varname);
-                        string str = this.GetValueOfVariables(obj);
-
-                        this.txtValue.Text = $"[{BitConverter.ToDouble((byte[])obj, 0)}], [{BitConverter.ToDouble((byte[])obj, 8)}],"+
-											$"[{BitConverter.ToDouble((byte[])obj, 16)}], [{BitConverter.ToDouble((byte[])obj, 24)}]";//str;
-
-                      //  byte[][] bytes = {Encoding.ASCII.GetBytes("foo"), Encoding.ASCII.GetBytes($"{x}")};
-					  	
-                  //      publisher.SendMultipartBytes(bytes);
-                         //   .SendMoreFrame("foo") // Topic
-                          //  .SendFrame($"{x}"); // Message
-						publisher.SendFrame((byte[])obj);
-                        Thread.Sleep(50);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
-
-        }
 		
         private object RemoveBrackets(string val)
 		{

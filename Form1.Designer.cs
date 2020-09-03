@@ -8,8 +8,6 @@ namespace common_compolet_pure
     partial class Form1
     {
 
-        Thread cip_sycnc;
-
         private GroupBox groupBoxConnection;
         private NumericUpDown numPortNo;
         private Label labelPortNo;
@@ -35,8 +33,6 @@ namespace common_compolet_pure
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Text = "Form1";
-
-            cip_sycnc = new Thread(new ThreadStart(cip_update));
 
             commonCompolet1 = new OMRON.Compolet.CIPCompolet64.CommonCompolet(this.components);
             
@@ -306,12 +302,7 @@ namespace common_compolet_pure
 				this.commonCompolet1.Active = this.chkActive.Checked;
 				if (this.chkActive.Checked)
 				{
-                    if(cip_sycnc.ThreadState == ThreadState.Unstarted)
-                        cip_sycnc.Start();
-                    if(cip_sycnc.ThreadState == ThreadState.Stopped){
-                        cip_sycnc = new Thread(new ThreadStart(cip_update));
-                        cip_sycnc.Start();
-                    }
+
 					if (!this.commonCompolet1.IsConnected)
 					{
 
@@ -319,11 +310,9 @@ namespace common_compolet_pure
 
 						this.commonCompolet1.Active = false;
 						this.chkActive.Checked = false;
-                        cip_end = false;
+
 					}
-				}else{
-                    cip_end = false;
-                }
+				}
 			}
 			catch (Exception ex)
 			{
