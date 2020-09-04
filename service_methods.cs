@@ -30,23 +30,7 @@ namespace common_compolet_pure
 			}
 			return obj;
 		}
-		private byte[] ObjectToByteArray(object obj)
-		{
-			if(obj is Array)
-			{
-				Array arr = obj as Array;
-				Byte[] bin = new Byte[arr.Length];
-				for(int i = 0 ; i < bin.Length ; i++)
-				{
-					bin[i] = Convert.ToByte(arr.GetValue(i));
-				}
-				return bin;
-			}
-			else
-			{
-				return new Byte[1]{ Convert.ToByte(obj) };
-			}
-		}
+
         private string GetValueOfVariables(object val)
 		{
 			string valStr = string.Empty;

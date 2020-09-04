@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Threading;
 using OMRON.Compolet.CIPCompolet64;
+using System.Collections.Generic;
 
 namespace common_compolet_pure
 {
@@ -34,7 +35,7 @@ namespace common_compolet_pure
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Text = "Form1";
 
-            commonCompolet1 = new OMRON.Compolet.CIPCompolet64.CommonCompolet(this.components);
+            commonCompolet1 = new ExtCompolet(this.components);
             
             this.commonCompolet1.Active = false;
             this.commonCompolet1.ConnectionType = OMRON.Compolet.CIPCompolet64.ConnectionType.UCMM;
@@ -45,6 +46,13 @@ namespace common_compolet_pure
             this.commonCompolet1.UseRoutePath = false;
             // 
 
+            this.my_plc_var = new List<plcvariable>();
+            this.my_plc_var.Add(new plcvariable(this.commonCompolet1, "int_var"));
+            this.my_plc_var.Add(new plcvariable(this.commonCompolet1, "bool_var"));
+            this.my_plc_var.Add(new plcvariable(this.commonCompolet1, "word_var"));
+
+
+
             #region form content
 
             this.groupBoxConnection = new GroupBox();
@@ -53,7 +61,6 @@ namespace common_compolet_pure
             this.labelIPAddress = new Label();
             this.txtIPAddress = new TextBox();
             this.chkActive = new CheckBox();
-            this.chkPx = new CheckBox();
             this.chkMQ = new CheckBox();
             
             this.btnWriteVariable = new Button();
@@ -63,12 +70,18 @@ namespace common_compolet_pure
             this.txtVariableName = new TextBox();
             this.labelName = new Label();
 
+            this.var_list = new ListBox();
+
+
             this.groupBoxConnection.Controls.Add(this.btnWriteVariable);
             this.groupBoxConnection.Controls.Add(this.btnReadVariable);
             this.groupBoxConnection.Controls.Add(this.txtValue);
             this.groupBoxConnection.Controls.Add(this.labelValue);
             this.groupBoxConnection.Controls.Add(this.txtVariableName);
             this.groupBoxConnection.Controls.Add(this.labelName);
+            this.groupBoxConnection.Controls.Add(this.var_list);
+
+
 
             this.groupBoxConnection.Controls.Add(this.txtIPAddress);
             this.groupBoxConnection.Controls.Add(this.labelIPAddress);
@@ -76,7 +89,7 @@ namespace common_compolet_pure
             this.groupBoxConnection.Controls.Add(this.numPortNo);
             this.groupBoxConnection.Location = new System.Drawing.Point(8, 0);
             this.groupBoxConnection.Name = "groupBoxConnection";
-            this.groupBoxConnection.Size = new System.Drawing.Size(312, 208);
+            this.groupBoxConnection.Size = new System.Drawing.Size(512, 208);
             this.groupBoxConnection.TabIndex = 0;
             this.groupBoxConnection.TabStop = false;
             this.groupBoxConnection.Text = "Connection";
@@ -149,11 +162,6 @@ namespace common_compolet_pure
             this.chkActive.Text = "Active";
             this.chkActive.CheckedChanged += new System.EventHandler(this.chkActive_CheckedChanged);
 
-            this.chkPx.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkPx.Location = new System.Drawing.Point(26, 217);
-            this.chkPx.Name = "chkPx";
-            this.chkPx.Size = new System.Drawing.Size(71, 17);
-            this.chkPx.Text = "PX";
 
             this.chkMQ.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.chkMQ.Location = new System.Drawing.Point(200, 350);
@@ -215,72 +223,44 @@ namespace common_compolet_pure
             this.btnWriteVariable.Text = "Write";
             this.btnWriteVariable.Click += new System.EventHandler(this.btnWriteVariable_Click);
 
+            this.var_list.SelectedIndexChanged += var_list_SelectedIndexChanged;
+
+            this.var_list.Location = new System.Drawing.Point(373, 26);
+            foreach(plcvariable a in this.my_plc_var)
+                this.var_list.Items.Add(a.name);
+
+
             #endregion
 
             
 
         }
 
+        void var_list_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedCountry = var_list.SelectedItem.ToString();
+            this.txtVariableName.Text = selectedCountry;
+        }
 		private void btnReadVariable_Click(object sender, System.EventArgs e)
 		{
-			try
-			{
-				string varname = this.txtVariableName.Text;
-				object obj = this.commonCompolet1.ReadVariable(varname);
-				if (obj == null)
-				{
-					throw new NotSupportedException();
-				}
-
-				VariableInfo info = this.commonCompolet1.GetVariableInfo(varname);
-                System.Console.WriteLine($"Name: {info.Name}");
-                System.Console.WriteLine($"Type: {info.Type}");
-                System.Console.WriteLine($"IsArray: {info.IsArray}");
-                System.Console.WriteLine($"Dimension: {info.Dimension}");
-                System.Console.WriteLine($"NumberOfElements: {info.NumberOfElements}");
-                System.Console.WriteLine("info.StructMembers.length:" + info.StructMembers?.Length);
-
-                // foreach(var el in info.StructMembers){
-                //     System.Console.WriteLine($"Name: {el.Name}");
-                //     System.Console.WriteLine($"Type: {el.Type}");
-                //     System.Console.WriteLine($"IsArray: {el.IsArray}");
-                //     System.Console.WriteLine($"Dimension: {el.Dimension}");
-                //     System.Console.WriteLine($"NumberOfElements: {el.NumberOfElements}");
-                //     System.Console.WriteLine($"StartArrayElements: {el.StartArrayElements}");
-                //     System.Console.WriteLine("------------------");
-                // }
-				string str = this.GetValueOfVariables(obj);
-
-				this.txtValue.Text = str;
-			}
-			catch (Exception ex)
-			{
-                System.Console.WriteLine("exept");
-				MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
+            this.my_plc_var[var_list.SelectedIndex].readFromPlc();
+            object obj = this.my_plc_var[var_list.SelectedIndex].Plc_value;
+            if (obj == null)
+            {
+                throw new NotSupportedException();
+            }
+            else
+            {
+                string str = this.GetValueOfVariables(obj);
+                this.txtValue.Text = str;
+            }
 		}
 
 
 
 		private void btnWriteVariable_Click(object sender, System.EventArgs e)
 		{
-			try
-			{
-				// write
-				object val = this.RemoveBrackets(this.txtValue.Text);
-				if(this.commonCompolet1.GetVariableInfo(this.txtVariableName.Text).Type == VariableType.STRUCT)
-				{
-					val = this.ObjectToByteArray(val);
-				}
-				this.commonCompolet1.WriteVariable(this.txtVariableName.Text, val);
-
-				// read
-				this.btnReadVariable_Click(null, null);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
+            this.my_plc_var[var_list.SelectedIndex].Plc_value = this.txtValue.Text;
 		}
 
 

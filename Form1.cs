@@ -14,7 +14,9 @@ namespace common_compolet_pure
 {
     public partial class Form1 : Form
     {
-        private OMRON.Compolet.CIPCompolet64.CommonCompolet commonCompolet1;
+        private ExtCompolet commonCompolet1;
+        private List<plcvariable> my_plc_var;
+        private ListBox var_list;
         public Form1()
         {
             InitializeComponent();
