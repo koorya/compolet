@@ -14,9 +14,9 @@ namespace common_compolet_pure
 {
     public partial class Form1 : Form
     {
-        private ExtCompolet commonCompolet1;
-        private List<plcvariable> my_plc_var;
+        private List<ExtCompolet> plc_conn;
         private ListBox var_list;
+        private ListBox value_list;
         public Form1()
         {
             InitializeComponent();

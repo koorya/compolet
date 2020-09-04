@@ -1,15 +1,17 @@
 
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System;
 using OMRON.Compolet.CIPCompolet64;
 
 namespace common_compolet_pure
 {
-    public class plcvariable {
+	[Serializable] 
+    public class plcvariable
+	{
 		private ExtCompolet extCompolet;
-        public string name; //имя переменной как оно обозначено в плк
-        private string type; //тип этой переменной внутри плк
-        
+		public string name { get; set; } //имя переменной как оно обозначено в плк
+
         private object plc_val; // прочитанное значение, которое приведено к нрмальному виду. 
                                 //Потом, думаю, чисто этот класс не будет использоваться, будем от него наследоаться
                                 //А там уже под кажды тип переменных будет свое свойство
@@ -18,6 +20,7 @@ namespace common_compolet_pure
 			this.extCompolet = comp;
 			this.name = name;
 		}
+		[JsonIgnore]
         public object Plc_value //собственно свойство. Можно записывать в плк - это долгая процедура, можно читать ранее прочитанное.
         {
             get 

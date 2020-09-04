@@ -1,15 +1,17 @@
 using System;
 using System.Windows.Forms;
 using OMRON.Compolet.CIPCompolet64;
+using System.Collections.Generic;
 
 namespace common_compolet_pure
 {
     public class ExtCompolet : OMRON.Compolet.CIPCompolet64.CommonCompolet
     {
 
+		public List<plcvariable> plc_var_list;
         public ExtCompolet (System.ComponentModel.IContainer cont) : base(cont)
         {
-
+			plc_var_list = new List<plcvariable>();
         }
         public object WriteVar(string name, object value)
         {

@@ -3,6 +3,8 @@ using System.Windows.Forms;
 using System.Threading;
 using OMRON.Compolet.CIPCompolet64;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace common_compolet_pure
 {
@@ -15,11 +17,10 @@ namespace common_compolet_pure
         private Label labelIPAddress;
         private TextBox txtIPAddress;
         private CheckBox chkActive;
-        private CheckBox chkPx;
-        private CheckBox chkMQ;
 
         private Button btnWriteVariable;
         private Button btnReadVariable;
+        private Button btnReadAllVariables;
         private TextBox txtValue;
         private Label labelValue;
         private TextBox txtVariableName;
@@ -34,22 +35,22 @@ namespace common_compolet_pure
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Text = "Form1";
-
-            commonCompolet1 = new ExtCompolet(this.components);
             
-            this.commonCompolet1.Active = false;
-            this.commonCompolet1.ConnectionType = OMRON.Compolet.CIPCompolet64.ConnectionType.UCMM;
-            this.commonCompolet1.LocalPort = 3;
-            this.commonCompolet1.PeerAddress = "172.16.201.14";//"192.168.250.1";
-            this.commonCompolet1.ReceiveTimeLimit = ((long)(750));
-            this.commonCompolet1.RoutePath = "2%172.16.201.14\\1%0";//"2%192.168.250.1\\1%0";
-            this.commonCompolet1.UseRoutePath = false;
+            plc_conn = new List<ExtCompolet>();
+            plc_conn.Add(new ExtCompolet(this.components));
+            
+            this.plc_conn[0].Active = false;
+            this.plc_conn[0].ConnectionType = OMRON.Compolet.CIPCompolet64.ConnectionType.UCMM;
+            this.plc_conn[0].LocalPort = 3;
+            this.plc_conn[0].PeerAddress = "172.16.201.14";//"192.168.250.1";
+            this.plc_conn[0].ReceiveTimeLimit = ((long)(750));
+            this.plc_conn[0].RoutePath = "2%172.16.201.14\\1%0";//"2%192.168.250.1\\1%0";
+            this.plc_conn[0].UseRoutePath = false;
             // 
 
-            this.my_plc_var = new List<plcvariable>();
-            this.my_plc_var.Add(new plcvariable(this.commonCompolet1, "int_var"));
-            this.my_plc_var.Add(new plcvariable(this.commonCompolet1, "bool_var"));
-            this.my_plc_var.Add(new plcvariable(this.commonCompolet1, "word_var"));
+            this.plc_conn[0].plc_var_list.Add(new plcvariable(this.plc_conn[0], "int_var"));
+            this.plc_conn[0].plc_var_list.Add(new plcvariable(this.plc_conn[0], "bool_var"));
+            this.plc_conn[0].plc_var_list.Add(new plcvariable(this.plc_conn[0], "word_var"));
 
 
 
@@ -61,25 +62,28 @@ namespace common_compolet_pure
             this.labelIPAddress = new Label();
             this.txtIPAddress = new TextBox();
             this.chkActive = new CheckBox();
-            this.chkMQ = new CheckBox();
             
             this.btnWriteVariable = new Button();
             this.btnReadVariable = new Button();
+            this.btnReadAllVariables = new Button();
             this.txtValue = new TextBox();
             this.labelValue = new Label();
             this.txtVariableName = new TextBox();
             this.labelName = new Label();
 
             this.var_list = new ListBox();
+            this.value_list = new ListBox();
 
 
             this.groupBoxConnection.Controls.Add(this.btnWriteVariable);
             this.groupBoxConnection.Controls.Add(this.btnReadVariable);
+            this.groupBoxConnection.Controls.Add(this.btnReadAllVariables);
             this.groupBoxConnection.Controls.Add(this.txtValue);
             this.groupBoxConnection.Controls.Add(this.labelValue);
             this.groupBoxConnection.Controls.Add(this.txtVariableName);
             this.groupBoxConnection.Controls.Add(this.labelName);
             this.groupBoxConnection.Controls.Add(this.var_list);
+            this.groupBoxConnection.Controls.Add(this.value_list);
 
 
 
@@ -89,15 +93,13 @@ namespace common_compolet_pure
             this.groupBoxConnection.Controls.Add(this.numPortNo);
             this.groupBoxConnection.Location = new System.Drawing.Point(8, 0);
             this.groupBoxConnection.Name = "groupBoxConnection";
-            this.groupBoxConnection.Size = new System.Drawing.Size(512, 208);
+            this.groupBoxConnection.Size = new System.Drawing.Size(652, 208);
             this.groupBoxConnection.TabIndex = 0;
             this.groupBoxConnection.TabStop = false;
             this.groupBoxConnection.Text = "Connection";
 
             
             this.Controls.Add(this.chkActive);
-            this.Controls.Add(this.chkPx);
-            this.Controls.Add(this.chkMQ);
             
             this.Controls.Add(this.groupBoxConnection);
 
@@ -163,13 +165,6 @@ namespace common_compolet_pure
             this.chkActive.CheckedChanged += new System.EventHandler(this.chkActive_CheckedChanged);
 
 
-            this.chkMQ.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkMQ.Location = new System.Drawing.Point(200, 350);
-            this.chkMQ.Name = "chkMQ";
-            this.chkMQ.Size = new System.Drawing.Size(71, 17);
-            this.chkMQ.Text = "chkMQ";
-           // this.chkMQ.CheckedChanged += null ;//+= new System.EventHandler(this.chkMQ_CheckedChanged);
-
 
             // 
             // labelName
@@ -186,7 +181,7 @@ namespace common_compolet_pure
             this.txtVariableName.Name = "txtVariableName";
             this.txtVariableName.Size = new System.Drawing.Size(93, 20);
             this.txtVariableName.TabIndex = 1;
-            this.txtVariableName.Text = "glob_jumar.dist";
+            this.txtVariableName.Text = "";
             // 
             // labelValue
             // 
@@ -212,6 +207,14 @@ namespace common_compolet_pure
             this.btnReadVariable.TabIndex = 5;
             this.btnReadVariable.Text = "Read";
             this.btnReadVariable.Click += new System.EventHandler(this.btnReadVariable_Click);
+
+            this.btnReadAllVariables.Location = new System.Drawing.Point(373, 126);
+            this.btnReadAllVariables.Name = "btnReadAllVariables";
+            this.btnReadAllVariables.Size = new System.Drawing.Size(64, 26);
+            this.btnReadAllVariables.TabIndex = 5;
+            this.btnReadAllVariables.Text = "Read All";
+            this.btnReadAllVariables.Click += new System.EventHandler(this.btnReadAllVariables_Click);
+
             // 
             // btnWriteVariable
             // 
@@ -226,8 +229,17 @@ namespace common_compolet_pure
             this.var_list.SelectedIndexChanged += var_list_SelectedIndexChanged;
 
             this.var_list.Location = new System.Drawing.Point(373, 26);
-            foreach(plcvariable a in this.my_plc_var)
+            foreach(plcvariable a in this.plc_conn[0].plc_var_list)
+            {
                 this.var_list.Items.Add(a.name);
+            }
+            this.var_list.SetSelected(0, true);
+
+            this.value_list.Location = new System.Drawing.Point(503, 26);
+            
+
+            serialize_var_list(plc_conn[0].plc_var_list);
+
 
 
             #endregion
@@ -243,8 +255,8 @@ namespace common_compolet_pure
         }
 		private void btnReadVariable_Click(object sender, System.EventArgs e)
 		{
-            this.my_plc_var[var_list.SelectedIndex].readFromPlc();
-            object obj = this.my_plc_var[var_list.SelectedIndex].Plc_value;
+            this.plc_conn[0].plc_var_list[var_list.SelectedIndex].readFromPlc();
+            object obj = this.plc_conn[0].plc_var_list[var_list.SelectedIndex].Plc_value;
             if (obj == null)
             {
                 throw new NotSupportedException();
@@ -255,40 +267,64 @@ namespace common_compolet_pure
                 this.txtValue.Text = str;
             }
 		}
+		private void btnReadAllVariables_Click(object sender, System.EventArgs e)
+		{
+            this.txtValue.Text = "";
+            value_list.Items.Clear();
+            foreach(ExtCompolet plc in plc_conn)
+            {
+                foreach(plcvariable vr in plc.plc_var_list)
+                {
+                    vr.readFromPlc();
+                    object obj = vr.Plc_value;
+                    if (obj == null)
+                    {
+                        throw new NotSupportedException();
+                    }
+                    else
+                    {
+                        string str = this.GetValueOfVariables(obj);
+                       // this.txtValue.Text += "; " + str;
+                        value_list.Items.Add(str);
+                    }
+                }
+            }
+
+		}
 
 
 
 		private void btnWriteVariable_Click(object sender, System.EventArgs e)
 		{
-            this.my_plc_var[var_list.SelectedIndex].Plc_value = this.txtValue.Text;
+            this.plc_conn[0].plc_var_list[var_list.SelectedIndex].Plc_value = this.txtValue.Text;
 		}
 
 
         private void txtIPAddress_TextChanged(object sender, System.EventArgs e)
 		{
-			this.commonCompolet1.PeerAddress = this.txtIPAddress.Text;
+			this.plc_conn[0].PeerAddress = this.txtIPAddress.Text;
 		}
 
 
 		private void numPortNo_ValueChanged(object sender, System.EventArgs e)
 		{
-			this.commonCompolet1.LocalPort = (int)this.numPortNo.Value;
+			this.plc_conn[0].LocalPort = (int)this.numPortNo.Value;
 		}
 
 		private void chkActive_CheckedChanged(object sender, System.EventArgs e)
 		{
 			try
 			{
-				this.commonCompolet1.Active = this.chkActive.Checked;
+				this.plc_conn[0].Active = this.chkActive.Checked;
 				if (this.chkActive.Checked)
 				{
 
-					if (!this.commonCompolet1.IsConnected)
+					if (!this.plc_conn[0].IsConnected)
 					{
 
 						MessageBox.Show("Connection failed !" + System.Environment.NewLine + "Please check PeerAddress.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-						this.commonCompolet1.Active = false;
+						this.plc_conn[0].Active = false;
 						this.chkActive.Checked = false;
 
 					}
@@ -297,7 +333,7 @@ namespace common_compolet_pure
 			catch (Exception ex)
 			{
 				MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				this.commonCompolet1.Active = false;
+				this.plc_conn[0].Active = false;
 				this.chkActive.Checked = false;
 			}
 		}
