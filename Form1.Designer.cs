@@ -54,6 +54,22 @@ namespace common_compolet_pure
                 plc_conn.Add(plc);
             }
 
+            List<ExtComp_serial> ser_list = new List<ExtComp_serial>();
+            foreach (ExtCompolet plc in plc_conn)
+            {
+                ExtComp_serial ser = plc.convert_to_serial();
+                ser_list.Add(ser);
+            }
+
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            using (FileStream _fs = new FileStream("user1.json", FileMode.OpenOrCreate))
+            {
+                JsonSerializer.SerializeAsync<List<ExtComp_serial>>(_fs, ser_list, options);
+                Console.WriteLine("Data has been saved to file");
+            }
 
             #region form content
 
@@ -278,19 +294,22 @@ namespace common_compolet_pure
             value_list.Items.Clear();
             foreach(ExtCompolet plc in plc_conn)
             {
-                foreach(plcvariable vr in plc.plc_var_list)
+                if(plc.Active == true)
                 {
-                    vr.readFromPlc();
-                    object obj = vr.Plc_value;
-                    if (obj == null)
+                    foreach(plcvariable vr in plc.plc_var_list)
                     {
-                        throw new NotSupportedException();
-                    }
-                    else
-                    {
-                        string str = this.GetValueOfVariables(obj);
-                       // this.txtValue.Text += "; " + str;
-                        value_list.Items.Add(str);
+                        vr.readFromPlc();
+                        object obj = vr.Plc_value;
+                        if (obj == null)
+                        {
+                            throw new NotSupportedException();
+                        }
+                        else
+                        {
+                            string str = this.GetValueOfVariables(obj);
+                        // this.txtValue.Text += "; " + str;
+                            value_list.Items.Add(str);
+                        }
                     }
                 }
             }

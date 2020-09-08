@@ -22,7 +22,7 @@ namespace common_compolet_pure
     }
     partial class ExtCompolet 
     {
-        public void serialize()
+        public ExtComp_serial convert_to_serial()
         {
             ExtComp_serial ser = new ExtComp_serial();
             ser.plc_name = this.plc_name;
@@ -35,19 +35,7 @@ namespace common_compolet_pure
                 ser.var_name_list.Add(v);
             }
             
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-
-            using (FileStream fs = new FileStream("user.json", FileMode.OpenOrCreate))
-            {
-                JsonSerializer.SerializeAsync<ExtComp_serial>(fs, ser, options);
-                Console.WriteLine("Data has been saved to file");
-            }
-
-            string serial_str = JsonSerializer.Serialize<ExtComp_serial>(ser, options);
-            Console.WriteLine(serial_str);
+            return ser;
         }
 
         public void deserialize(FileStream fs)
