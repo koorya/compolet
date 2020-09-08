@@ -79,5 +79,29 @@ namespace common_compolet_pure
             this.plc_var_list = deser.var_name_list;
 
         }
+        public void deserialize(ExtComp_serial deser)
+        {
+
+            Console.WriteLine(deser.plc_name);
+            Console.WriteLine(deser.PeerAddress);
+            Console.WriteLine(deser.LocalPort);
+
+            this.Active = false;
+            this.ConnectionType = OMRON.Compolet.CIPCompolet64.ConnectionType.UCMM;
+            this.LocalPort = deser.LocalPort;
+            this.PeerAddress = deser.PeerAddress;//"192.168.250.1";
+            this.ReceiveTimeLimit = ((long)(750));
+            this.RoutePath = "2%172.16.201.14\\1%0";//"2%192.168.250.1\\1%0";
+            this.UseRoutePath = false;
+            this.plc_name = deser.plc_name;
+
+            foreach(plcvariable v in deser.var_name_list)
+            {
+                v.extCompolet = this;
+                Console.WriteLine(v.name);
+            }
+            this.plc_var_list = deser.var_name_list;
+
+        }
     }
 }

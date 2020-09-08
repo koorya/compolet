@@ -1,16 +1,34 @@
-{
-  "plc_name": "def name",
-  "LocalPort": 3,
-  "PeerAddress": "172.16.201.14",
-  "var_name_list": [
-    {
-      "name": "int_var"
-    },
-    {
-      "name": "bool_var"
-    },
-    {
-      "name": "word_var"
-    }
-  ]
-}
+[
+  {
+    "plc_name": "def name",
+    "LocalPort": 3,
+    "PeerAddress": "172.16.201.14",
+    "var_name_list": [
+      {
+        "name": "int_var"
+      },
+      {
+        "name": "bool_var"
+      },
+      {
+        "name": "word_var"
+      }
+    ]
+  },
+  {
+    "plc_name": "second name",
+    "LocalPort": 3,
+    "PeerAddress": "172.16.201.15",
+    "var_name_list": [
+      {
+        "name": "2int_var"
+      },
+      {
+        "name": "2bool_var"
+      },
+      {
+        "name": "2word_var"
+      }
+    ]
+  }
+]

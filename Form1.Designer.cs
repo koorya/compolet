@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using System.IO;
+using System.Threading.Tasks;
 
 namespace common_compolet_pure
 {
@@ -43,9 +44,15 @@ namespace common_compolet_pure
             FileStream fs = new FileStream("user.json", FileMode.OpenOrCreate);
 //            plc_conn.Add(new ExtCompolet(this.components, "{\"plc_name\":\"def name\",\"LocalPort\":3,\"PeerAddress\":\"172.16.201.14\",\"var_name_list\":[{\"name\":\"int_var\"},{\"name\":\"bool_var\"},{\"name\":\"word_var\"}]}"));
             
-            ExtCompolet plc = new ExtCompolet(this.components, fs);
-            plc_conn.Add(plc);
-            
+            ValueTask<List<ExtComp_serial>> _deser = JsonSerializer.DeserializeAsync<List<ExtComp_serial>>(fs);
+
+            while(_deser.IsCompleted);
+
+            foreach (ExtComp_serial deser in _deser.Result)
+            {
+                ExtCompolet plc = new ExtCompolet(this.components, deser);
+                plc_conn.Add(plc);
+            }
 
 
             #region form content

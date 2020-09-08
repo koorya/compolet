@@ -24,7 +24,10 @@ namespace common_compolet_pure
         {
 			this.deserialize(fs);
         }
-
+        public ExtCompolet (System.ComponentModel.IContainer cont, ExtComp_serial deser) : base(cont)
+        {
+			this.deserialize(deser);
+        }
         public object WriteVar(string name, object value)
         {
             try
