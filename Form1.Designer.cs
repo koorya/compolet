@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using System.IO;
+
 namespace common_compolet_pure
 {
     partial class Form1
@@ -37,9 +39,13 @@ namespace common_compolet_pure
             this.Text = "Form1";
             
             plc_conn = new List<ExtCompolet>();
-            plc_conn.Add(new ExtCompolet(this.components, "{\"plc_name\":\"def name\",\"LocalPort\":3,\"PeerAddress\":\"172.16.201.14\",\"var_name_list\":[{\"name\":\"int_var\"},{\"name\":\"bool_var\"},{\"name\":\"word_var\"}]}"));
-            
 
+            FileStream fs = new FileStream("user.json", FileMode.OpenOrCreate);
+//            plc_conn.Add(new ExtCompolet(this.components, "{\"plc_name\":\"def name\",\"LocalPort\":3,\"PeerAddress\":\"172.16.201.14\",\"var_name_list\":[{\"name\":\"int_var\"},{\"name\":\"bool_var\"},{\"name\":\"word_var\"}]}"));
+            
+            ExtCompolet plc = new ExtCompolet(this.components, fs);
+            plc_conn.Add(plc);
+            
 
 
             #region form content
@@ -217,16 +223,19 @@ namespace common_compolet_pure
             this.var_list.SelectedIndexChanged += var_list_SelectedIndexChanged;
 
             this.var_list.Location = new System.Drawing.Point(373, 26);
+            bool var_list_not_empty = false;
             foreach(plcvariable a in this.plc_conn[0].plc_var_list)
             {
                 this.var_list.Items.Add(a.name);
+                var_list_not_empty = true;
             }
-            this.var_list.SetSelected(0, true);
+            if(var_list_not_empty)
+                this.var_list.SetSelected(0, true);
 
             this.value_list.Location = new System.Drawing.Point(503, 26);
             
             //plc_conn[0].deserialize()
-            plc_conn[0].serialize();
+        //    plc_conn[0].serialize();
             //serialize_var_list(plc_conn[0].plc_var_list);
 
 

@@ -1,0 +1,16 @@
+{
+  "plc_name": "def name",
+  "LocalPort": 3,
+  "PeerAddress": "172.16.201.14",
+  "var_name_list": [
+    {
+      "name": "int_var"
+    },
+    {
+      "name": "bool_var"
+    },
+    {
+      "name": "word_var"
+    }
+  ]
+}

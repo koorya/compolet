@@ -5,6 +5,9 @@ using System.Text.Json.Serialization;
 using System.Windows.Forms;
 using OMRON.Compolet.CIPCompolet64;
 
+using System.IO;
+using System.Threading.Tasks;
+
 namespace common_compolet_pure
 {
     [Serializable]
@@ -16,23 +19,13 @@ namespace common_compolet_pure
 
         public List<plcvariable> var_name_list { get; set; }
 
-/*
-            this.plc_conn[0].Active = false;
-            this.plc_conn[0].ConnectionType = OMRON.Compolet.CIPCompolet64.ConnectionType.UCMM;
-            this.plc_conn[0].LocalPort = 3;
-            this.plc_conn[0].PeerAddress = "172.16.201.14";//"192.168.250.1";
-            this.plc_conn[0].ReceiveTimeLimit = ((long)(750));
-            this.plc_conn[0].RoutePath = "2%172.16.201.14\\1%0";//"2%192.168.250.1\\1%0";
-            this.plc_conn[0].UseRoutePath = false;
-            */ 
-
     }
     partial class ExtCompolet 
     {
-        public string serialize()
+        public void serialize()
         {
             ExtComp_serial ser = new ExtComp_serial();
-            ser.plc_name = "def name";
+            ser.plc_name = this.plc_name;
             ser.PeerAddress = this.PeerAddress;
             ser.LocalPort = this.LocalPort;
 
@@ -41,14 +34,30 @@ namespace common_compolet_pure
             {
                 ser.var_name_list.Add(v);
             }
-            string serial_str = JsonSerializer.Serialize<ExtComp_serial>(ser);
+            
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            using (FileStream fs = new FileStream("user.json", FileMode.OpenOrCreate))
+            {
+                JsonSerializer.SerializeAsync<ExtComp_serial>(fs, ser, options);
+                Console.WriteLine("Data has been saved to file");
+            }
+
+            string serial_str = JsonSerializer.Serialize<ExtComp_serial>(ser, options);
             Console.WriteLine(serial_str);
-            return serial_str;
         }
 
-        public void deserialize(string serial_str)
+        public void deserialize(FileStream fs)
         {
-            ExtComp_serial deser = JsonSerializer.Deserialize<ExtComp_serial>(serial_str);
+
+            ValueTask<ExtComp_serial> _deser = JsonSerializer.DeserializeAsync<ExtComp_serial>(fs);
+
+            while(_deser.IsCompleted);
+
+            ExtComp_serial deser = _deser.Result;
             Console.WriteLine(deser.plc_name);
             Console.WriteLine(deser.PeerAddress);
             Console.WriteLine(deser.LocalPort);

@@ -3,6 +3,8 @@ using System.Windows.Forms;
 using OMRON.Compolet.CIPCompolet64;
 using System.Collections.Generic;
 
+using System.IO;
+
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -18,10 +20,11 @@ namespace common_compolet_pure
         {
 			plc_var_list = new List<plcvariable>();
         }
-		public ExtCompolet (System.ComponentModel.IContainer cont, string fn) : base(cont)
+        public ExtCompolet (System.ComponentModel.IContainer cont, FileStream fs) : base(cont)
         {
-			this.deserialize(fn);
+			this.deserialize(fs);
         }
+
         public object WriteVar(string name, object value)
         {
             try
