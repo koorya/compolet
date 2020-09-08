@@ -37,20 +37,8 @@ namespace common_compolet_pure
             this.Text = "Form1";
             
             plc_conn = new List<ExtCompolet>();
-            plc_conn.Add(new ExtCompolet(this.components));
+            plc_conn.Add(new ExtCompolet(this.components, "{\"plc_name\":\"def name\",\"LocalPort\":3,\"PeerAddress\":\"172.16.201.14\",\"var_name_list\":[{\"name\":\"int_var\"},{\"name\":\"bool_var\"},{\"name\":\"word_var\"}]}"));
             
-            this.plc_conn[0].Active = false;
-            this.plc_conn[0].ConnectionType = OMRON.Compolet.CIPCompolet64.ConnectionType.UCMM;
-            this.plc_conn[0].LocalPort = 3;
-            this.plc_conn[0].PeerAddress = "172.16.201.14";//"192.168.250.1";
-            this.plc_conn[0].ReceiveTimeLimit = ((long)(750));
-            this.plc_conn[0].RoutePath = "2%172.16.201.14\\1%0";//"2%192.168.250.1\\1%0";
-            this.plc_conn[0].UseRoutePath = false;
-            // 
-
-            this.plc_conn[0].plc_var_list.Add(new plcvariable(this.plc_conn[0], "int_var"));
-            this.plc_conn[0].plc_var_list.Add(new plcvariable(this.plc_conn[0], "bool_var"));
-            this.plc_conn[0].plc_var_list.Add(new plcvariable(this.plc_conn[0], "word_var"));
 
 
 
@@ -237,8 +225,9 @@ namespace common_compolet_pure
 
             this.value_list.Location = new System.Drawing.Point(503, 26);
             
-
-            serialize_var_list(plc_conn[0].plc_var_list);
+            //plc_conn[0].deserialize()
+            plc_conn[0].serialize();
+            //serialize_var_list(plc_conn[0].plc_var_list);
 
 
 

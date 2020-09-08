@@ -9,17 +9,23 @@ namespace common_compolet_pure
 	[Serializable] 
     public class plcvariable
 	{
-		private ExtCompolet extCompolet;
+        [JsonIgnore]
+		public ExtCompolet extCompolet { get; set; }
 		public string name { get; set; } //имя переменной как оно обозначено в плк
 
         private object plc_val; // прочитанное значение, которое приведено к нрмальному виду. 
                                 //Потом, думаю, чисто этот класс не будет использоваться, будем от него наследоаться
                                 //А там уже под кажды тип переменных будет свое свойство
-		public plcvariable(ExtCompolet comp, string name)
-		{
-			this.extCompolet = comp;
-			this.name = name;
-		}
+        public plcvariable()
+        {
+
+        }
+        public plcvariable(ExtCompolet plc_conn, string name)
+        {
+            this.name = name;
+            this.extCompolet = plc_conn;
+        }
+
 		[JsonIgnore]
         public object Plc_value //собственно свойство. Можно записывать в плк - это долгая процедура, можно читать ранее прочитанное.
         {
