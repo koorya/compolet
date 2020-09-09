@@ -89,6 +89,87 @@ namespace common_compolet_pure
 				return new Byte[1]{ Convert.ToByte(obj) };
 			}
 		}
+
+        public static string GetValueOfVariables(object val)
+		{
+			string valStr = string.Empty;
+			if (val.GetType().IsArray)
+			{
+				Array valArray = val as Array;
+				if (valArray.Rank == 1)
+				{
+					valStr += "[";
+					foreach (object a in valArray)
+					{
+						valStr += ExtCompolet.GetValueString(a) + ",";
+					}
+					valStr = valStr.TrimEnd(',');
+					valStr += "]";
+				}
+				else if (valArray.Rank == 2)
+				{
+					for (int i = 0; i <= valArray.GetUpperBound(0); i++)
+					{
+						valStr += "[";
+						for (int j = 0; j <= valArray.GetUpperBound(1); j++)
+						{
+							valStr += ExtCompolet.GetValueString(valArray.GetValue(i, j)) + ",";
+						}
+						valStr = valStr.TrimEnd(',');
+						valStr += "]";
+					}
+				}
+				else if (valArray.Rank == 3)
+				{
+					for (int i = 0; i <= valArray.GetUpperBound(0); i++)
+					{
+						for (int j = 0; j <= valArray.GetUpperBound(1); j++)
+						{
+							valStr += "[";
+							for (int z = 0; z <= valArray.GetUpperBound(2); z++)
+							{
+								valStr += ExtCompolet.GetValueString(valArray.GetValue(i, j, z)) + ",";
+							}
+							valStr = valStr.TrimEnd(',');
+							valStr += "]";
+						}
+					}
+				}
+			}
+			else
+			{
+				valStr = ExtCompolet.GetValueString(val);
+			}
+			return valStr;
+		}
+		static private object RemoveBrackets(string val)
+		{
+			object obj = string.Empty;
+			if (val.IndexOf("[") >= 0)
+			{
+				string str = val.Trim('[', ']');
+				str = str.Replace("][", ",");
+				obj = str.Split(',');
+			}
+			else
+			{
+				obj = val;
+			}
+			return obj;
+		}
+
+
+        static private string GetValueString(object val)
+		{
+			if (val is float || val is double)
+			{
+				return string.Format("{0:R}", val);
+			}
+			else
+			{
+				return val.ToString();
+			}
+		}
     }
 
 }
