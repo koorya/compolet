@@ -15,6 +15,7 @@ namespace common_compolet_pure
     public partial class Form1 : Form
     {
         private List<ExtCompolet> plc_conn;
+        private List<PLCForm> plc_form_list;
         public Form1()
         {
             InitializeComponent();

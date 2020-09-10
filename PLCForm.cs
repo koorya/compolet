@@ -93,7 +93,7 @@ namespace common_compolet_pure
             this.txtIPAddress.Name = "txtIPAddress";
             this.txtIPAddress.Size = new System.Drawing.Size(176, 20);
             this.txtIPAddress.TabIndex = 8;
-            this.txtIPAddress.Text = "172.16.201.14";//"192.168.250.1";
+            this.txtIPAddress.Text = this.plc_conn.PeerAddress;//"172.16.201.14";//"192.168.250.1";
             this.txtIPAddress.TextChanged += new System.EventHandler(this.txtIPAddress_TextChanged);
             // 
 
@@ -122,7 +122,7 @@ namespace common_compolet_pure
             this.numPortNo.Size = new System.Drawing.Size(176, 20);
             this.numPortNo.TabIndex = 0;
             this.numPortNo.Value = new decimal(new int[] {
-            3,
+            this.plc_conn.LocalPort,
             0,
             0,
             0});

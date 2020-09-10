@@ -16,7 +16,7 @@ namespace common_compolet_pure
 
         private System.ComponentModel.IContainer components = null;
 
-
+        private ComboBox plcName;
 
         private void InitializeComponent()
         {
@@ -56,11 +56,50 @@ namespace common_compolet_pure
                 Console.WriteLine("Data has been saved to file");
             }
 
+            plc_form_list = new List<PLCForm>();
+            foreach(ExtCompolet plc in plc_conn)
+            {
+                PLCForm plc_form = new PLCForm(plc);
+                plc_form_list.Add(plc_form);
+                this.Controls.Add(plc_form);
+                plc_form.Visible = false;
+            }
 
-            this.Controls.Add(new PLCForm(plc_conn[0]));
+            this.plcName = new ComboBox();
+            this.Controls.Add(plcName);
+
+
+            this.plcName.Location = new System.Drawing.Point(10, 220);
+
+
+            this.plcName.Name = "plcName";
+        //    this.plcName.Size = new System.Drawing.Size(176, 20);
+        //    this.plcName.TabIndex = 0;
+
+            this.plcName.SelectedIndexChanged += this.plcName_ValueChanged;
+
+            foreach (ExtCompolet plc in plc_conn)
+            {
+                this.plcName.Items.Add(plc.plc_name);
+            }
+            this.plcName.SelectedIndex = 0;
+            plcName_ValueChanged(null, null);
+
 
         }
 
+		private void plcName_ValueChanged(object sender, System.EventArgs e)
+		{
+            int i = 0;
+            foreach(PLCForm plc_form in plc_form_list)
+            {
+                if(i == (int)this.plcName.SelectedIndex)
+    			    plc_form.Visible = true;
+                else
+                    plc_form.Visible = false;
+                i++;
+            }
+		}
     }
 }
 

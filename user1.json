@@ -1,6 +1,6 @@
 [
   {
-    "plc_name": "def name",
+    "plc_name": "near kostya",
     "LocalPort": 3,
     "PeerAddress": "172.16.201.14",
     "var_name_list": [
@@ -16,15 +16,16 @@
     ]
   },
   {
-    "plc_name": "second name",
-    "LocalPort": 7,
-    "PeerAddress": "172.16.201.15",
+    "plc_name": "near me",
+    "LocalPort": 3,
+    "PeerAddress": "172.16.201.13",
     "var_name_list": [
       {
-        "name": "2int_var"
-      },
-      {
-        "name": "2ol_var"
+        "name": "plc_from_stock"
+      }
+    ]
+  }
+]]name": "2ol_var"
       },
       {
         "name": "2word_var"
