@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 namespace common_compolet_pure
 {
 	[Serializable] 
-    public partial class ExtCompolet : OMRON.Compolet.CIPCompolet64.CommonCompolet
+    public partial class ExtCompolet : OMRON.Compolet.CIPCompolet64.CommonCompolet, IPLCConnect
     {
 
 		public string plc_name;

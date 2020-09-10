@@ -61,7 +61,7 @@ namespace common_compolet_pure
 
             foreach(plcvariable v in deser.var_name_list)
             {
-                v.extCompolet = this;
+                v.plc_conection = this;
                 Console.WriteLine(v.name);
             }
             this.plc_var_list = deser.var_name_list;
@@ -85,7 +85,7 @@ namespace common_compolet_pure
 
             foreach(plcvariable v in deser.var_name_list)
             {
-                v.extCompolet = this;
+                v.plc_conection = this;
                 Console.WriteLine(v.name);
             }
             this.plc_var_list = deser.var_name_list;
