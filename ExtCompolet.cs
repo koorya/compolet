@@ -20,10 +20,7 @@ namespace common_compolet_pure
         {
 			plc_var_list = new List<plcvariable>();
         }
-        public ExtCompolet (System.ComponentModel.IContainer cont, FileStream fs) : base(cont)
-        {
-			this.deserialize(fs);
-        }
+
         public ExtCompolet (System.ComponentModel.IContainer cont, ExtComp_serial deser) : base(cont)
         {
 			this.deserialize(deser);
