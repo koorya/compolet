@@ -3,7 +3,8 @@ using System.Windows.Forms;
 
 namespace common_compolet_pure
 {
-    
+    // Гуишный контейнер для управления подключением к плк и его переменными
+    // наследуется от групбокса - объединяющего гуишного контейнера для других гуишных компонентов
     public class PLCForm : GroupBox
     {
         private NumericUpDown numPortNo;
@@ -22,12 +23,15 @@ namespace common_compolet_pure
         public ExtCompolet plc_conn;
         private ListBox var_list;
         private ListBox value_list;
+
+        // конструктор, принимающий в качестве параметра объект связи с плк
         public PLCForm(ExtCompolet plc_conn) : base()
         {
             this.plc_conn = plc_conn;
+
+            // тут расставляем на объекте гуишки управления, наполняем списки переменных по входному объекту связи с плк
             #region form content
 
-//            this.groupBoxConnection = new GroupBox();
             this.numPortNo = new NumericUpDown();
             this.labelPortNo = new Label();
             this.labelIPAddress = new Label();
@@ -215,14 +219,20 @@ namespace common_compolet_pure
 
         }
 
+        // обработчик события при выборе переменной из списка
+        // Выделенное имя просто вписываем в дополнительное поле
         void var_list_SelectedIndexChanged(object sender, EventArgs e)
         {
             string selectedCountry = var_list.SelectedItem.ToString();
             this.txtVariableName.Text = selectedCountry;
         }
+
+        // обработчик события при нажатии кнопки "прочитать переменную"
 		private void btnReadVariable_Click(object sender, System.EventArgs e)
 		{
+            // находим нужную переменную по номеру в списке и вызывем у нее метод "прочитать"
             this.plc_conn.plc_var_list[var_list.SelectedIndex].readFromPlc();
+            // полученное значение мы преобразуем в строку и помещаем в поле на форме
             object obj = this.plc_conn.plc_var_list[var_list.SelectedIndex].Plc_value;
             if (obj == null)
             {
@@ -234,6 +244,8 @@ namespace common_compolet_pure
                 this.txtValue.Text = str;
             }
 		}
+        // Обработчик события кнопки "прочитать все"
+        // происходит чтение всех переменных по очереди и заполнение значениями лист-бокса со значениями
 		private void btnReadAllVariables_Click(object sender, System.EventArgs e)
 		{
             this.txtValue.Text = "";
@@ -261,33 +273,34 @@ namespace common_compolet_pure
 		}
 
 
-
+        // Обработчик нажатия на кнопку для записи одной переменной
 		private void btnWriteVariable_Click(object sender, System.EventArgs e)
 		{
             this.plc_conn.plc_var_list[var_list.SelectedIndex].Plc_value = this.txtValue.Text;
 		}
 
-
+        // при изменении текста в поле с ip адресом - новый адрес фиксируется в объект связи с плк
         private void txtIPAddress_TextChanged(object sender, System.EventArgs e)
 		{
 			this.plc_conn.PeerAddress = this.txtIPAddress.Text;
 		}
 
-
+        // при изменении текста в поле с номером порта - новый номер фиксируется в объект связи с плк
 		private void numPortNo_ValueChanged(object sender, System.EventArgs e)
 		{
 			this.plc_conn.LocalPort = (int)this.numPortNo.Value;
 		}
 
+        // Здесь происходит подключение и отключение от плк
 		private void chkActive_CheckedChanged(object sender, System.EventArgs e)
 		{
 			try
 			{
-				this.plc_conn.Active = this.chkActive.Checked;
+				this.plc_conn.Active = this.chkActive.Checked; // подключаемся либо отключаемся от плк
 				if (this.chkActive.Checked)
 				{
 
-					if (!this.plc_conn.IsConnected)
+					if (!this.plc_conn.IsConnected)// если не получилось подключиться, пишем об этом в сообщении, выключаем подключение и снимаем галку
 					{
 
 						MessageBox.Show("Connection failed !" + System.Environment.NewLine + "Please check PeerAddress.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
