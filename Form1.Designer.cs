@@ -17,7 +17,8 @@ namespace common_compolet_pure
         private System.ComponentModel.IContainer components = null; 
 
         private ComboBox plcName; //выпадающий список для выбора плк
-
+        private List<ExtCompolet> plc_conn; // Список объектов для подключения к плк через CIP
+        private List<PLCForm> plc_form_list; // Список гуишных разделов для управления каждым плк.
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();

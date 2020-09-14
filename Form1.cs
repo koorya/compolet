@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 
-using OMRON.Compolet.CIPCompolet64;
 
 namespace common_compolet_pure
 {
+    // основная форма (окно) приложения
     public partial class Form1 : Form
     {
-        private List<ExtCompolet> plc_conn;
-        private List<PLCForm> plc_form_list;
         public Form1()
         {
             InitializeComponent();

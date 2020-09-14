@@ -1,9 +1,6 @@
 
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using System;
-using OMRON.Compolet.CIPCompolet64;
-
 namespace common_compolet_pure
 {
     // Это класс, который хранит имя переменной плк, 

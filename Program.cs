@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace common_compolet_pure
 {
+    // Точка входа в программу всегда в этом классе и называется Main()
     static class Program
     {
         /// <summary>
