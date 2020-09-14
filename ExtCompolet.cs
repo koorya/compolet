@@ -3,28 +3,36 @@ using System.Windows.Forms;
 using OMRON.Compolet.CIPCompolet64;
 using System.Collections.Generic;
 
-using System.IO;
-
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace common_compolet_pure
 {
+	// ExtCompolet - Extended Compolet (Расширеный клас омроовского комполета)
+	// Класс объектов для связи с контроллером через CIP
+	// вся работа с сетью реализована внутри родительского класса от омрона
+	// Тут добавлены методы для удобого чтения-записи переменных, а
+	// кроме - методы для строкового представления структур и массивов - ои были взяты из примера и могут еще пригодиться
+	// Класс является составным (partial), в другом файле описаны методы для упаковки нужных полей в другой объект 
+	// для последующей сериализации в файл и методы для обратного действия.
+	// Этот класс содержит список переменных плк, который заполняется руками (либо при десериализации)
+	// Этот объект обеспечивет интерфейс IPLCConnect, в котором заданы возможности чтения и записи переменных
 	[Serializable] 
     public partial class ExtCompolet : OMRON.Compolet.CIPCompolet64.CommonCompolet, IPLCConnect
     {
-
+		// название плк (емеля, etc)
 		public string plc_name;
+		// список переменных в плк
 		public List<plcvariable> plc_var_list;
+		// Конструктор, который используется при создании в процессе работы программы, не по сохраненному в файле
         public ExtCompolet (System.ComponentModel.IContainer cont) : base(cont)
         {
 			plc_var_list = new List<plcvariable>();
         }
-
+		// Конструкотр, который принимает объект с упакованными в него полями (ip адрес, имя, список переменных и т.д.)
         public ExtCompolet (System.ComponentModel.IContainer cont, ExtComp_serial deser) : base(cont)
         {
 			this.deserialize(deser);
         }
+		// Запись переменной в плк и последующее чтение ее же из плк, возвращая значение через значение функции
         public object WriteVar(string name, object value)
         {
             try
@@ -42,11 +50,11 @@ namespace common_compolet_pure
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "this.Text", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(ex.Message, "WriteVar exeption", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return null;
             }
         }
-
+		// Чтение переменной из плк
 		public object readFromPlc(string varname)
 		{
 			try
@@ -69,6 +77,8 @@ namespace common_compolet_pure
 			}
 		}
 
+		// Следующие 4 функции исппользуются когда нужно прочитать или записать массив или структуру данных.
+		// Они взяты из примера
         public byte[] ObjectToByteArray(object obj)
 		{
 			if(obj is Array)
@@ -154,7 +164,6 @@ namespace common_compolet_pure
 			}
 			return obj;
 		}
-
 
         static private string GetValueString(object val)
 		{
