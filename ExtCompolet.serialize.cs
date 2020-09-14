@@ -1,19 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Windows.Forms;
-using OMRON.Compolet.CIPCompolet64;
-
-using System.IO;
-using System.Threading.Tasks;
 
 namespace common_compolet_pure
 {
-    [Serializable]
     // Список из именно этих объектов сериализуется в файл и десериализуется из него
     // Когда нужно достать из файла данные о плк и переменных, мы достаем этот объект
     // а затем уже из него получаем данные для создания объекта связи с плк
+    [Serializable]
     public class ExtComp_serial
     {
         // название плк
@@ -29,7 +22,9 @@ namespace common_compolet_pure
         public List<plcvariable> var_name_list { get; set; }
 
     }
-    
+
+    // Продолжене писания класса ExtCompolet, в котором описаны два метода 
+    // для распаковки и упаковки даных в промежуточный объект для сериализакции
     partial class ExtCompolet 
     {
         // метод, который упаковывает этот объект в тот, который будет сериализоваться в файл.
@@ -62,6 +57,7 @@ namespace common_compolet_pure
             this.UseRoutePath = false;
             this.plc_name = deser.plc_name;
 
+            // задаем всем переменным этого плк ссылку на объект с методами для чтения и записи переменных
             foreach(plcvariable v in deser.var_name_list)
             {
                 v.plc_conection = this;

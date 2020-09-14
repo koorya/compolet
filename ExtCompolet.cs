@@ -15,8 +15,7 @@ namespace common_compolet_pure
 	// для последующей сериализации в файл и методы для обратного действия.
 	// Этот класс содержит список переменных плк, который заполняется руками (либо при десериализации)
 	// Этот объект обеспечивет интерфейс IPLCConnect, в котором заданы возможности чтения и записи переменных
-	[Serializable] 
-    public partial class ExtCompolet : OMRON.Compolet.CIPCompolet64.CommonCompolet, IPLCConnect
+	public partial class ExtCompolet : OMRON.Compolet.CIPCompolet64.CommonCompolet, IPLCConnect
     {
 		// название плк (емеля, etc)
 		public string plc_name;
