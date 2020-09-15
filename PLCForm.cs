@@ -52,13 +52,20 @@ namespace common_compolet_pure
 
             this.Controls.Add(this.btnWriteVariable);
             this.Controls.Add(this.btnReadVariable);
-            this.Controls.Add(this.btnReadAllVariables);
             this.Controls.Add(this.txtValue);
             this.Controls.Add(this.labelValue);
             this.Controls.Add(this.txtVariableName);
             this.Controls.Add(this.labelName);
-            this.Controls.Add(this.var_list);
-            this.Controls.Add(this.value_list);
+            Panel var_value = new Panel();
+            var_value.Padding = new Padding(20);
+            var_value.Location = new System.Drawing.Point(50, 250);
+            var_value.Size = new System.Drawing.Size(300, 200);
+            var_value.Controls.Add(this.var_list);
+            var_value.Controls.Add(this.value_list);
+
+            var_value.Controls.Add(this.btnReadAllVariables);
+
+            this.Controls.Add(var_value);
 
 
 
@@ -66,9 +73,9 @@ namespace common_compolet_pure
             this.Controls.Add(this.labelIPAddress);
             this.Controls.Add(this.labelPortNo);
             this.Controls.Add(this.numPortNo);
-            this.Location = new System.Drawing.Point(8, 0);
+            this.Location = new System.Drawing.Point(350, 0);
             this.Name = "groupBoxConnection";
-            this.Size = new System.Drawing.Size(652, 208);
+            this.Size = new System.Drawing.Size(350, 400);
             this.TabIndex = 0;
             this.TabStop = false;
             this.Text = "Connection";
@@ -181,7 +188,7 @@ namespace common_compolet_pure
             this.btnReadVariable.Text = "Read";
             this.btnReadVariable.Click += new System.EventHandler(this.btnReadVariable_Click);
 
-            this.btnReadAllVariables.Location = new System.Drawing.Point(373, 126);
+            this.btnReadAllVariables.Location = new System.Drawing.Point(150, 100);
             this.btnReadAllVariables.Name = "btnReadAllVariables";
             this.btnReadAllVariables.Size = new System.Drawing.Size(64, 26);
             this.btnReadAllVariables.TabIndex = 5;
@@ -201,7 +208,7 @@ namespace common_compolet_pure
 
             this.var_list.SelectedIndexChanged += var_list_SelectedIndexChanged;
 
-            this.var_list.Location = new System.Drawing.Point(373, 26);
+            this.var_list.Location = new System.Drawing.Point(0, 0);
             bool var_list_not_empty = false;
             foreach(plcvariable a in this.plc_conn.plc_var_list)
             {
@@ -211,7 +218,7 @@ namespace common_compolet_pure
             if(var_list_not_empty)
                 this.var_list.SetSelected(0, true);
 
-            this.value_list.Location = new System.Drawing.Point(503, 26);
+            this.value_list.Location = new System.Drawing.Point(130, 0);
             
 
 

@@ -18,7 +18,8 @@ namespace common_compolet_pure
 
         private ComboBox plcName; //выпадающий список для выбора плк
         private List<ExtCompolet> plc_conn; // Список объектов для подключения к плк через CIP
-        private List<PLCForm> plc_form_list; // Список гуишных разделов для управления каждым плк.
+        private Dictionary<string, PLCForm> plc_form_list; // Список гуишных разделов для управления каждым плк.
+        private TreeView plc_tree; 
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
@@ -63,11 +64,11 @@ namespace common_compolet_pure
             #endregion
 
             // список фреймов с полями для управления конкретным плк
-            plc_form_list = new List<PLCForm>();
+            plc_form_list = new Dictionary<string, PLCForm>();
             foreach(ExtCompolet plc in plc_conn)
             {
                 PLCForm plc_form = new PLCForm(plc); // создали сам фрейм
-                plc_form_list.Add(plc_form); // добавили его в список фреймов, чтоб потом была возможность их все перебрать
+                plc_form_list.Add(plc_form.plc_conn.plc_name, plc_form); // добавили его в список фреймов, чтоб потом была возможность их все перебрать
                 this.Controls.Add(plc_form); // добавили этот фрейм на форму (окошко)
                 plc_form.Visible = false; // сделали форму невидимой, чтоб они не перекрывались.
             }
@@ -86,6 +87,22 @@ namespace common_compolet_pure
             this.plcName.SelectedIndex = 0; // выбираем первый пункт в списке, чтобы после у нас отобразился один фрейм
             plcName_ValueChanged(null, null); // имитируем событие смены индекса, чтобы у нас отобразился первый фрейм
 
+            plc_tree = new TreeView();
+            this.Controls.Add(plc_tree);
+            plc_tree.Size = new System.Drawing.Size(150, 200);
+            plc_tree.Location = new System.Drawing.Point(10, 5);
+            plc_tree.BeforeSelect += (a, b) => { if( plc_form_list.ContainsKey(plc_tree.SelectedNode.Text)) plc_form_list[plc_tree.SelectedNode.Text].Visible = false;};
+            plc_tree.AfterSelect += (a, b) =>  { if( plc_form_list.ContainsKey(plc_tree.SelectedNode.Text)) plc_form_list[plc_tree.SelectedNode.Text].Visible = true; };
+
+            foreach (ExtCompolet plc in plc_conn)
+            {
+                TreeNode node = new TreeNode();
+                node.Text = plc.plc_name;
+                node.Nodes.Add(new TreeNode());
+                node.Nodes[0].Text = plc.PeerAddress;
+                plc_tree.Nodes.Add(node);
+            }
+            //plc_tree.SelectedNode = plc_tree.Nodes[0];
 
         }
 
@@ -95,12 +112,12 @@ namespace common_compolet_pure
             // проходим по списку фреймов и гасим все, у которых номер 
             // не совпадает с выбранным пунктом. А выббранный наоборот делаем видимым
             int i = 0;
-            foreach(PLCForm plc_form in plc_form_list)
+            foreach(KeyValuePair<string, PLCForm> plc_form in plc_form_list)
             {
                 if(i == (int)this.plcName.SelectedIndex)
-    			    plc_form.Visible = true;
+    			    plc_form.Value.Visible = true;
                 else
-                    plc_form.Visible = false;
+                    plc_form.Value.Visible = false;
                 i++;
             }
 		}
