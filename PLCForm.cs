@@ -57,9 +57,8 @@ namespace common_compolet_pure
             this.Controls.Add(this.txtVariableName);
             this.Controls.Add(this.labelName);
             Panel var_value = new Panel();
-            var_value.Padding = new Padding(20);
             var_value.Location = new System.Drawing.Point(50, 250);
-            var_value.Size = new System.Drawing.Size(300, 200);
+            var_value.Size = new System.Drawing.Size(250, 130);
             var_value.Controls.Add(this.var_list);
             var_value.Controls.Add(this.value_list);
 
@@ -78,7 +77,7 @@ namespace common_compolet_pure
             this.Size = new System.Drawing.Size(350, 400);
             this.TabIndex = 0;
             this.TabStop = false;
-            this.Text = "Connection";
+            this.Text = plc_conn.plc_name;
 
             
             this.Controls.Add(this.chkActive);

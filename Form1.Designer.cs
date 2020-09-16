@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Threading;
-using OMRON.Compolet.CIPCompolet64;
 using System.Collections.Generic;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-
 using System.IO;
 using System.Threading.Tasks;
 
