@@ -15,8 +15,6 @@ namespace common_compolet_pure
 	{
 
 		private System.ComponentModel.IContainer components = null; 
-
-		private ComboBox plcName; //выпадающий список для выбора плк
 		private List<ExtCompolet> plc_conn; // Список объектов для подключения к плк через CIP
 		private Dictionary<string, PLCForm> plc_form_dict; // Список гуишных разделов для управления каждым плк.
 		private TreeView plc_tree; 
@@ -73,19 +71,7 @@ namespace common_compolet_pure
 				plc_form.Visible = false; // сделали форму невидимой, чтоб они не перекрывались.
 			}
 
-			this.plcName = new ComboBox(); // поле для выбора активного фрейма в окне
-			this.Controls.Add(plcName); // добавляем это поле на форму
-			this.plcName.Location = new System.Drawing.Point(10, 220);
-			this.plcName.Name = "plcName";
-			this.plcName.SelectedIndexChanged += this.plcName_ValueChanged; // устанавливаем обработчик события изменения выбранного индекса
 
-			// заполняем этот выпадающий список именами плк, проходя по списку объектов для связи с плк
-			foreach (ExtCompolet plc in plc_conn)
-			{
-				this.plcName.Items.Add(plc.plc_name);
-			}
-			this.plcName.SelectedIndex = 0; // выбираем первый пункт в списке, чтобы после у нас отобразился один фрейм
-			plcName_ValueChanged(null, null); // имитируем событие смены индекса, чтобы у нас отобразился первый фрейм
 
 			plc_tree = new TreeView();
 			this.Controls.Add(plc_tree);
@@ -104,7 +90,7 @@ namespace common_compolet_pure
 					plc_form_dict[plc_tree.SelectedNode.Text].Visible = true; 
 				}
 			};
-
+			// заполняем дерево узлами с именами плк и их ип адресами в качестве поднодов
 			foreach (ExtCompolet plc in plc_conn)
 			{
 				TreeNode node = new TreeNode();
@@ -113,25 +99,8 @@ namespace common_compolet_pure
 				node.Nodes[0].Text = plc.PeerAddress;
 				plc_tree.Nodes.Add(node);
 			}
-			//plc_tree.SelectedNode = plc_tree.Nodes[0];
-
 		}
 
-		// обработчик события при выборе текущего плк
-		private void plcName_ValueChanged(object sender, System.EventArgs e)
-		{
-			// проходим по списку фреймов и гасим все, у которых номер 
-			// не совпадает с выбранным пунктом. А выббранный наоборот делаем видимым
-			int i = 0;
-			foreach(KeyValuePair<string, PLCForm> plc_form in plc_form_dict)
-			{
-				if(i == (int)this.plcName.SelectedIndex)
-					plc_form.Value.Visible = true;
-				else
-					plc_form.Value.Visible = false;
-				i++;
-			}
-		}
 	}
 }
 
