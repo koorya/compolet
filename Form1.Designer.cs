@@ -18,7 +18,7 @@ namespace common_compolet_pure
 
 		private ComboBox plcName; //выпадающий список для выбора плк
 		private List<ExtCompolet> plc_conn; // Список объектов для подключения к плк через CIP
-		private Dictionary<string, PLCForm> plc_form_list; // Список гуишных разделов для управления каждым плк.
+		private Dictionary<string, PLCForm> plc_form_dict; // Список гуишных разделов для управления каждым плк.
 		private TreeView plc_tree; 
 		private void InitializeComponent()
 		{
@@ -64,11 +64,11 @@ namespace common_compolet_pure
 			#endregion
 
 			// список фреймов с полями для управления конкретным плк
-			plc_form_list = new Dictionary<string, PLCForm>();
+			plc_form_dict = new Dictionary<string, PLCForm>();
 			foreach(ExtCompolet plc in plc_conn)
 			{
 				PLCForm plc_form = new PLCForm(plc); // создали сам фрейм
-				plc_form_list.Add(plc_form.plc_conn.plc_name, plc_form); // добавили его в список фреймов, чтоб потом была возможность их все перебрать
+				plc_form_dict.Add(plc_form.plc_conn.plc_name, plc_form); // добавили его в список фреймов, чтоб потом была возможность их все перебрать
 				this.Controls.Add(plc_form); // добавили этот фрейм на форму (окошко)
 				plc_form.Visible = false; // сделали форму невидимой, чтоб они не перекрывались.
 			}
@@ -95,13 +95,13 @@ namespace common_compolet_pure
 			// В качестве обработчика задана лямбда функция, которая в случае, если элемент с нужным именем в коллекции есть длает все невидимыми, а его делает видимым. 
 			plc_tree.AfterSelect += (a, b) =>  
 			{ 
-				if( plc_form_list.ContainsKey(plc_tree.SelectedNode.Text)) 
+				if( plc_form_dict.ContainsKey(plc_tree.SelectedNode.Text)) 
 				{
-					foreach(KeyValuePair<string, PLCForm> plc_form in plc_form_list)
+					foreach(KeyValuePair<string, PLCForm> plc_form in plc_form_dict)
 					{
 						plc_form.Value.Visible = false;
 					}
-					plc_form_list[plc_tree.SelectedNode.Text].Visible = true; 
+					plc_form_dict[plc_tree.SelectedNode.Text].Visible = true; 
 				}
 			};
 
@@ -123,7 +123,7 @@ namespace common_compolet_pure
 			// проходим по списку фреймов и гасим все, у которых номер 
 			// не совпадает с выбранным пунктом. А выббранный наоборот делаем видимым
 			int i = 0;
-			foreach(KeyValuePair<string, PLCForm> plc_form in plc_form_list)
+			foreach(KeyValuePair<string, PLCForm> plc_form in plc_form_dict)
 			{
 				if(i == (int)this.plcName.SelectedIndex)
 					plc_form.Value.Visible = true;
